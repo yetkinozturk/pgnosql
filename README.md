@@ -19,7 +19,7 @@ For Debian based Linux distros:
 apt-get install postgresql-9.3
 
 
-see instructions here if it'is not in your repo:
+see instructions here if it is not in your repo:
 http://www.postgresql.org/download/linux/debian/
 
 
