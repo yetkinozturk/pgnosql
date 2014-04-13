@@ -2,9 +2,9 @@ CC      = g++
 CFLAGS  = -I/usr/local/include/
 LDFLAGS = -lpqxx -lpq -laprutil-1 -lexpat -lapr-1 -llog4cxx -lconfig++
 
-all: server
+all: server.app
 
-server: server.o loggingoption.o pgconnection.o configure.o pgnosqlserver.o
+server.app: server.o loggingoption.o pgconnection.o configure.o pgnosqlserver.o
 	@echo "================="
 	@echo "Linking Sources"
 	@echo "================="
@@ -14,7 +14,7 @@ server.o: loggingoption.cpp pgconnection.cpp configure.cpp pgnosqlserver.cpp ser
 	@echo "================="
 	@echo "Compiling Sources"
 	@echo "================="
-	$(CC) --std=gnu++11 -c $(CFLAGS) loggingoption.cpp pgconnection.cpp configure.cpp pgnosqlserver.cpp server.cpp
+	$(CC) --std=gnu++11 -c $(CFLAGS) $^ 
 
 .PHONY: clean
 
@@ -23,4 +23,4 @@ clean:
 	@echo "Cleaning Up"
 	@echo "==========="
 	rm *.o
-	rm server
+	rm server.app
