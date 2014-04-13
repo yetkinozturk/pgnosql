@@ -11,7 +11,7 @@ PGConnection::PGConnection(){
 	port = 0;
 
 	//configure LOGGING
-	LOGGIN_CONFIG
+	LOGGING_CONFIG
 
 	logger = Logger::getLogger( "PGConnection");
 	conn=NULL;
@@ -26,7 +26,7 @@ PGConnection::PGConnection(const std::string &username, const std::string &passw
 		port( port ) {
 
 	//configure LOGGING
-	LOGGIN_CONFIG
+	LOGGING_CONFIG
 
 	logger = Logger::getLogger( "PGConnection");
 	conn=NULL;

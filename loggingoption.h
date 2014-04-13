@@ -1,7 +1,7 @@
 #ifndef _LOGGING_OPTION_H
 #define _LOGGING_OPTION_H
 
-#define LOGGIN_CONFIG \
+#define LOGGING_CONFIG \
 do { \
     if (fileLogging && consoleLogging) { \
         PropertyConfigurator::configure("config/logconsolefile.cfg"); \

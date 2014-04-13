@@ -37,7 +37,8 @@ std::map<std::string,std::string> getConfiguration()
         }
         if (!(network.lookupValue("username", config["username"]) &&
               network.lookupValue("password", config["password"]) &&
-              network.lookupValue("port", config["port"])))
+              network.lookupValue("port", config["port"]) &&
+			  network.lookupValue("connection_limit",config["connection_limit"])))
         {
             std::cerr<<"Error while getting network config from config/pgnosql.cfg"<<std::endl;
         }
