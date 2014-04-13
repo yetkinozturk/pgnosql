@@ -27,7 +27,7 @@ http://www.postgresql.org/download/linux/debian/
 
 For Debian based Linux distros:
 
-sudo apt-get install autoconf automake libpqxx-3.1 libpqxx-3.1-dev liblog4cxx10 liblog4cxx10-dev libgmpxx4ldbl libgmp3-dev libapr1 libaprutil1 libtool
+sudo apt-get install autoconf automake libpqxx-3.1 libpqxx-3.1-dev liblog4cxx10 liblog4cxx10-dev libgmpxx4ldbl libgmp3-dev libapr1 libaprutil1 libtool libconfig++-dev
 
 
 

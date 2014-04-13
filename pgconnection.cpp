@@ -12,14 +12,17 @@ PGConnection::PGConnection(){
 
 	//configure LOGGING
 	LOGGIN_CONFIG
+
 	logger = Logger::getLogger( "PGConnection");
 	conn=NULL;
 
 }
 
 PGConnection::PGConnection(const std::string &username, const std::string &password,
-		const std::string &hostname, const std::string &dbname, short port)
-		:username( username ), password( password ), hostname( hostname ), dbname( dbname ),
+		const std::string &hostname, const std::string &dbname, short port,
+		bool fileLogging, bool consoleLogging)
+		:LoggingOption(fileLogging, consoleLogging), username( username ),
+		password( password ), hostname( hostname ), dbname( dbname ),
 		port( port ) {
 
 	//configure LOGGING

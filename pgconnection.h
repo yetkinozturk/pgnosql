@@ -2,8 +2,9 @@
 #define __PGCONNECTION__
 
 #include "common.h"
+#include "loggingoption.h"
 
-class PGConnection
+class PGConnection : LoggingOption
 {
 
 private:
@@ -14,13 +15,15 @@ private:
 	short port;
 	pqxx::connection *conn;
 	LoggerPtr logger;
+
 public:
 	
 	//Constructors:
 	PGConnection();
 
 	PGConnection(const std::string &username, const std::string &password, 
-				 const std::string &hostname, const std::string &dbname, short port);
+				 const std::string &hostname, const std::string &dbname, short port,
+				 bool fileLogging, bool consoleLogging);
 
 	//Check Connection Status
 	bool isConnected();
