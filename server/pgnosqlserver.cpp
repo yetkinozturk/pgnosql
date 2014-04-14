@@ -32,6 +32,10 @@ PgnosqlServer::PgnosqlServer(std::map<std::string,std::string> config)
 	logger = Logger::getLogger("PgnosqlServer");
 }
 
+int PgnosqlServer::init()
+{
+	pgConn->connect();
+}
 int PgnosqlServer::setSocket(int sfd)
 {
 	int flags, s;

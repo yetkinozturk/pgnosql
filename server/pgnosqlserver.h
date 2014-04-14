@@ -31,6 +31,7 @@ public:
 	PgnosqlServer(std::map<std::string,std::string> config);
 	int setSocket(int sfd);
 	int bindSocket();
+	int init();
 	int run ();
 	~PgnosqlServer();
 };

@@ -60,7 +60,7 @@ bool PGConnection::connect() {
     catch (const std::exception &e)
 	{
 		LOG4CXX_FATAL(logger, "Can't connect to db "<<e.what());
-		return false;
+		throw PGConnectionError();
 	}
 	return true;
 }
