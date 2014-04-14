@@ -1,5 +1,5 @@
 #include "pgnosqlserver.h"
-#include "configure.h"
+#include "config/configure.h"
 
 int main () {
 	std::map<std::string,std::string> config = getConfiguration();

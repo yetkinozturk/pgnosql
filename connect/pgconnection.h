@@ -1,8 +1,8 @@
 #ifndef __PGCONNECTION__   
 #define __PGCONNECTION__
 
-#include "common.h"
-#include "loggingoption.h"
+#include "common/common.h"
+#include "logging/loggingoption.h"
 
 class PGConnection : LoggingOption
 {

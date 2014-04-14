@@ -12,9 +12,9 @@
 #include <fcntl.h>
 #include <sys/epoll.h>
 #include <cerrno>
-#include "common.h"
-#include "pgconnection.h"
-#include "loggingoption.h"
+#include "common/common.h"
+#include "connect/pgconnection.h"
+#include "logging/loggingoption.h"
 
 class PgnosqlServer : LoggingOption
 {
