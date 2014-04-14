@@ -1,13 +1,20 @@
-pgnosql
+pgnosql : NoSQL Frontend for Postgresql (WARNING: UNDER HEAVY DEVELOPMENT)
 =======
 
 Instructions
 ============
+- Install dependencies :)
+
 - Start Postgresql
 
 For Debian based Linux distros:
 
 sudo /etc/init.d/postgresql start
+
+- Configure pgnosql server with config/pgnosql.cfg
+
+- make
+
 
 Dependencies
 ============
