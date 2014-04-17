@@ -3,10 +3,10 @@
 
 #define LOGGING_CONFIG \
 do { \
-    if (fileLogging && consoleLogging) { \
+    if (logOption.fileLogging && logOption.consoleLogging) { \
         PropertyConfigurator::configure("config/logconsolefile.cfg"); \
     } \
-    else if (fileLogging){ \
+    else if (logOption.fileLogging){ \
         PropertyConfigurator::configure("config/logfile.cfg"); \
     } \
     else { \
@@ -14,13 +14,9 @@ do { \
     }\
 } while (0);
 
-class LoggingOption 
+struct LoggingOption 
 {
-public:
 	bool fileLogging;
 	bool consoleLogging;
-	LoggingOption();
-	LoggingOption(bool fileLogging, bool consoleLogging);
-	~LoggingOption();
 };
 #endif

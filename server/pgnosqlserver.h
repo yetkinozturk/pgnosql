@@ -16,10 +16,11 @@
 #include "connect/pgconnection.h"
 #include "logging/loggingoption.h"
 
-class PgnosqlServer : LoggingOption
+class PgnosqlServer
 {
 
 private:
+	LoggingOption logOption;
 	LoggerPtr logger;
 	PGConnection *pgConn;
 	std::string username;

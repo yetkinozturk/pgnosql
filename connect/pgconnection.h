@@ -4,26 +4,20 @@
 #include "common/common.h"
 #include "logging/loggingoption.h"
 
-class PGConnection : LoggingOption
+class PGConnection
 {
 
 private:
-	std::string username;
-	std::string password;
-	std::string hostname;
-	std::string dbname;
-	short port;
+	LoggingOption logOption;
 	pqxx::connection *conn;
 	LoggerPtr logger;
-
+	std::map<std::string,std::string> config;
 public:
 	
 	//Constructors:
 	PGConnection();
 
-	PGConnection(const std::string &username, const std::string &password, 
-				 const std::string &hostname, const std::string &dbname, short port,
-				 bool fileLogging, bool consoleLogging);
+	PGConnection(std::map<std::string,std::string> config);
 
 	//Check Connection Status
 	bool isConnected();

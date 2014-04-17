@@ -1,8 +1,11 @@
 #include "pgnosqlserver.h"
 
 PgnosqlServer::PgnosqlServer()
-	:LoggingOption(false, true)
 {
+	//default logging options.
+	logOption.fileLogging = false;
+	logOption.consoleLogging = true;
+
 	//configure LOGGING
 	LOGGING_CONFIG
 	logger = Logger::getLogger( "PgnosqlServer");
@@ -10,23 +13,17 @@ PgnosqlServer::PgnosqlServer()
 }
 
 PgnosqlServer::PgnosqlServer(std::map<std::string,std::string> config)
-	:LoggingOption(false, true)
 {
-	fileLogging = (std::stoi(config["filelog"]) == 1);
-	consoleLogging = (std::stoi(config["consolelog"]) == 1);
+	logOption.fileLogging = (std::stoi(config["filelog"]) == 1);
+	logOption.consoleLogging = (std::stoi(config["consolelog"]) == 1);
 
     connLimit = std::stoi(config["connection_limit"]);
 	username = config["username"];
 	password = config["password"];
 	port = std::stoi(config["port"]);
 
-	pgConn = new PGConnection(config["pg_username"],
-                        	 config["pg_password"],
-                        	 config["pg_hostname"],
-                        	 config["pg_dbname"],
-                        	 std::stoi(config["pg_port"]),
-                        	 fileLogging,
-                        	 consoleLogging);
+	pgConn = new PGConnection(config);
+
 	//configure LOGGING
 	LOGGING_CONFIG
 	logger = Logger::getLogger("PgnosqlServer");

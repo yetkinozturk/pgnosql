@@ -4,32 +4,29 @@
 //Constructors:
 PGConnection::PGConnection(){
 
-	username = "";
-	password = "";
-	hostname = "";
-	dbname = "";
-	port = 0;
+	logOption.fileLogging = false;
+	logOption.consoleLogging = true;
 
 	//configure LOGGING
 	LOGGING_CONFIG
 
 	logger = Logger::getLogger( "PGConnection");
-	conn=NULL;
+	conn = nullptr;
 
 }
 
-PGConnection::PGConnection(const std::string &username, const std::string &password,
-		const std::string &hostname, const std::string &dbname, short port,
-		bool fileLogging, bool consoleLogging)
-		:LoggingOption(fileLogging, consoleLogging), username( username ),
-		password( password ), hostname( hostname ), dbname( dbname ),
-		port( port ) {
+PGConnection::PGConnection(std::map<std::string,std::string> config)
+		:config( config ) 
+{
+
+    logOption.fileLogging = (std::stoi(config["filelog"]) == 1);
+	logOption.consoleLogging = (std::stoi(config["consolelog"]) == 1);
 
 	//configure LOGGING
 	LOGGING_CONFIG
 
 	logger = Logger::getLogger( "PGConnection");
-	conn=NULL;
+	conn = nullptr;
 }
 
 //Check Connection Status
@@ -50,11 +47,11 @@ bool PGConnection::connect() {
 	LOG4CXX_INFO(logger, "PGConnection -> connect");
 	try
 	{
-		std::string conn_str = "user=" + username + " ";
-					 conn_str += "host=" + hostname + " ";
-					 conn_str += "password=" + password + " ";
-					 conn_str += "dbname=" + dbname + " ";
-					 conn_str += "port=" + std::to_string(port);
+		std::string conn_str = "user=" + config["pg_username"] + " ";
+					 conn_str += "host=" + config["pg_hostname"] + " ";
+					 conn_str += "password=" + config["pg_password"] + " ";
+					 conn_str += "dbname=" + config["pg_dbname"] + " ";
+					 conn_str += "port=" + config["pg_port"];
 		conn = new pqxx::connection(conn_str);
 	}
     catch (const std::exception &e)
@@ -89,7 +86,7 @@ pqxx::connection* PGConnection::getConnection() {
 
 //Destructor:
 PGConnection::~PGConnection() {
-	if ( conn != NULL) {
+	if ( conn != nullptr) {
 		delete conn;
 	}
 	LOG4CXX_INFO(logger, "Finalizing PGConnection");
