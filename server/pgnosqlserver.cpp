@@ -32,6 +32,7 @@ PgnosqlServer::PgnosqlServer(std::map<std::string,std::string> config)
 int PgnosqlServer::init()
 {
 	pgConn->connect();
+	LOG4CXX_INFO(logger, "Connected!");
 }
 int PgnosqlServer::setSocket(int sfd)
 {

@@ -1,7 +1,9 @@
 #ifndef __PGNOSQL_COMMON__   
 #define __PGNOSQL_COMMON__
 
-#include <iostream>
+#include <string>
+#include <list>
+#include <map>
 #include <pqxx/pqxx>
 #include <log4cxx/logger.h>
 #include <log4cxx/xml/domconfigurator.h>

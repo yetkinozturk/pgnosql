@@ -21,3 +21,19 @@ public:
 protected:
     std::string msg_;
 };
+
+class CommandParseError : public std::exception
+{
+
+};
+
+class UnknownCommandError : public std::exception
+{
+
+};
+
+class CommandTranslateError : public std::exception
+{
+
+};
+

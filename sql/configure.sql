@@ -9,7 +9,7 @@ CREATE TABLE kvstore (
 	  key_hash bytea UNIQUE,
 	  value text,
 	  entry_date DATE,
-	  expire_date DATE,
+	  expire_date DATE
 );
 
 

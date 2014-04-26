@@ -1,3 +1,3 @@
 DROP DATABASE pgnosql;
-DROP ROLE pgnosql;
+DROP CASCADE ROLE pgnosql;
 
