@@ -37,3 +37,8 @@ class CommandTranslateError : public std::exception
 
 };
 
+class CommandParameterError : public std::exception
+{
+
+};
+

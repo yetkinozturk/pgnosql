@@ -12,7 +12,7 @@ server.app: server.o pgconnection.o configure.o pgnosqlserver.o
 	@echo ""
 	$(CC) --std=gnu++11 -o $@ $^ $(LDFLAGS)
 
-server.o: connect/pgconnection.cpp config/configure.cpp server/pgnosqlserver.cpp server/server.cpp
+server.o: connect/pgconnection.cpp config/configure.cpp cmd/pgnosqlcommand.cpp server/pgnosqlserver.cpp server/server.cpp
 	@echo ""
 	@echo "================="
 	@echo "Compiling Sources"

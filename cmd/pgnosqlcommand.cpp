@@ -59,7 +59,64 @@ bool Command::tokenize()
 	{
 		return false;
 	}
+
+	prefix = boost::to_upper_copy(tokenList.front());
+
 	return true;
+}
+
+std::string Command::flushall()
+{
+	std::string ret="";
+	return ret;
+}
+
+std::string Command::setkv()
+{
+    std::string ret="";
+    return ret;
+}
+
+std::string Command::getkv()
+{
+    std::string ret="";
+    return ret;
+}
+
+std::string Command::delkv()
+{
+    std::string ret="";
+    return ret;
+}
+
+std::string Command::getkeys()
+{
+    std::string ret="";
+    return ret;
+}
+
+std::string Command::getholders()
+{
+    std::string ret="";
+    return ret;
+}
+
+std::string Command::newholder()
+{
+    std::string ret="";
+    return ret;
+}
+
+std::string Command::modholder()
+{
+    std::string ret="";
+    return ret;
+}
+
+std::string Command::delholder()
+{
+    std::string ret="";
+    return ret;
 }
 
 PgnosqlCommand::PgnosqlCommand(std::string str)
@@ -77,30 +134,28 @@ std::string PgnosqlCommand::translate()
 	}
 
 	std::string ret="";
-	boost::to_upper(token.front());
 
-	if( token.front() == PREFIXFLUSHALL ) {
+	if( cmd.getPrefix() == PREFIXFLUSHALL ) {
 		ret = cmd.flushall();
-	} else if ( token.front() == PREFIXSETKV ) {
+	} else if ( cmd.getPrefix() == PREFIXSETKV ) {
 		ret = cmd.setkv();
-	} else if ( token.front() == PREFIXGETKV ) {
+	} else if ( cmd.getPrefix() == PREFIXGETKV ) {
 		ret = cmd.getkv();
-	} else if ( token.front() == PREFIXDELKV ) {
+	} else if ( cmd.getPrefix() == PREFIXDELKV ) {
         ret = cmd.delkv();
-    } else if ( token.front() == PREFIXGETKEYS ) {
+    } else if ( cmd.getPrefix() == PREFIXGETKEYS ) {
         ret = cmd.getkeys();
-    } else if ( token.front() == PREFIXGETHOLDERS) {
+    } else if ( cmd.getPrefix() == PREFIXGETHOLDERS) {
 		ret = cmd.getholders();
-	} else if ( token.front() == PREFIXNEWHOLDER) {
+	} else if ( cmd.getPrefix() == PREFIXNEWHOLDER) {
         ret = cmd.newholder();
-    } else if ( token.front() == PREFIXMODHOLDER) {
+    } else if ( cmd.getPrefix() == PREFIXMODHOLDER) {
         ret = cmd.modholder();
-    } else if ( token.front() == PREFIXDELHOLDER) {
+    } else if ( cmd.getPrefix() == PREFIXDELHOLDER) {
         ret = cmd.delholder();
     } else {
 		throw UnknownCommandError();
 	}
 	
 	return ret;
-
 }
