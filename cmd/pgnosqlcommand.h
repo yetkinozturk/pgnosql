@@ -16,6 +16,7 @@ public:
 	Command(){}
 	Command(std::string cmdString);
 	bool tokenize();
+	bool paramNumCheckOK(short min, short max);
 	std::string getPrefix(){ return prefix; }
 	std::string flushall();
 	std::string setkv();

@@ -65,56 +65,70 @@ bool Command::tokenize()
 	return true;
 }
 
+bool Command::paramNumCheckOK(short min, short max)
+{
+	return ((tokenList.size() >= min) && (tokenList.size() <= max));
+}
+
 std::string Command::flushall()
 {
+	if (!paramNumCheckOK(MINARGFLUSHALL,MAXARGFLUSHALL)) throw CommandParameterError();
 	std::string ret="";
 	return ret;
 }
 
 std::string Command::setkv()
 {
+	if (!paramNumCheckOK(MINARGSETKV,MAXARGSETKV)) throw CommandParameterError();
     std::string ret="";
     return ret;
 }
 
 std::string Command::getkv()
 {
+	if (!paramNumCheckOK(MINARGGETKV,MAXARGGETKV)) throw CommandParameterError();
     std::string ret="";
     return ret;
 }
 
 std::string Command::delkv()
 {
+	if (!paramNumCheckOK(MINARGDELKV,MAXARGDELKV)) throw CommandParameterError();
     std::string ret="";
     return ret;
 }
 
 std::string Command::getkeys()
 {
+	if (!paramNumCheckOK(MINARGGETKEYS,MAXARGGETKEYS)) throw CommandParameterError();
     std::string ret="";
     return ret;
 }
 
 std::string Command::getholders()
 {
+	if (!paramNumCheckOK(MINARGGETHOLDERS,MAXARGGETHOLDERS)) throw CommandParameterError();
     std::string ret="";
     return ret;
 }
 
 std::string Command::newholder()
 {
+	if (!paramNumCheckOK(MINARGNEWHOLDER,MAXARGNEWHOLDER)) throw CommandParameterError();
     std::string ret="";
     return ret;
 }
 
 std::string Command::modholder()
 {
+	if (!paramNumCheckOK(MINARGMODHOLDER,MAXARGMODHOLDER)) throw CommandParameterError();
     std::string ret="";
     return ret;
 }
 
 std::string Command::delholder()
 {
+	if (!paramNumCheckOK(MINARGDELHOLDER,MAXARGDELHOLDER)) throw CommandParameterError();
     std::string ret="";
     return ret;
 }
