@@ -3,6 +3,7 @@
 
 #include <string>
 #include <list>
+#include <vector>
 #include <map>
 #include <pqxx/pqxx>
 #include <log4cxx/logger.h>

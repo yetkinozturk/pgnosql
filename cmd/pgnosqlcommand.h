@@ -11,7 +11,7 @@ class Command
 private:
 	std::string cmdStr;
 	std::string prefix;
-	std::list<std::string> tokenList;
+	std::vector<std::string> tokenList;
 public:
 	Command(){}
 	Command(std::string cmdString);

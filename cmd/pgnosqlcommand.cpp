@@ -70,6 +70,9 @@ bool Command::paramNumCheckOK(short min, short max)
 	return ((tokenList.size() >= min) && (tokenList.size() <= max));
 }
 
+//
+// FLUSHALL
+// ARGS0
 std::string Command::flushall()
 {
 	if (!paramNumCheckOK(MINARGFLUSHALL,MAXARGFLUSHALL)) throw CommandParameterError();
@@ -77,27 +80,59 @@ std::string Command::flushall()
 	return ret;
 }
 
+//
+// SETKV X Y 1200
+// ARGS0 1 2    3
 std::string Command::setkv()
 {
 	if (!paramNumCheckOK(MINARGSETKV,MAXARGSETKV)) throw CommandParameterError();
     std::string ret="";
+	std::string expireTime="";
+
+	if (tokenList.size() == MAXARGSETKV) {
+		expireTime = " NOW() + INTERVAL '" + tokenList[MAXARGSETKV - 1] + " SECONDS' ";
+	} else {
+		expireTime = " NULL ";
+	}
+
+	ret = " UPDATE KVSTORE SET VALUE='" + tokenList[ MAXARGSETKV - 2 ] +"', ENTRY_DATE=NOW(), "
+		  " EXPIRE_DATE=" + expireTime +" WHERE KEY_HASH=DIGEST('"+ tokenList[ MAXARGSETKV - 3 ] +"', 'MD5'); "
+		  " INSERT INTO KVSTORE (KEY,KEY_HASH,VALUE,ENTRY_DATE,EXPIRE_DATE) SELECT "
+		  " '"+ tokenList[ MAXARGSETKV - 3 ] +"', DIGEST('"+ tokenList[ MAXARGSETKV - 3 ] +"', 'MD5'), "
+		  " '" + tokenList[ MAXARGSETKV - 2 ] + "',NOW(),"+ expireTime +
+		  " WHERE NOT EXISTS (SELECT 1 FROM KVSTORE WHERE KEY_HASH=DIGEST('"+ tokenList[ MAXARGSETKV - 3 ] +"', 'MD5'));";
     return ret;
 }
 
+//
+// GETKV X
+// ARGS0 1
 std::string Command::getkv()
 {
 	if (!paramNumCheckOK(MINARGGETKV,MAXARGGETKV)) throw CommandParameterError();
     std::string ret="";
+
+    ret = " SELECT VALUE FROM KVSTORE WHERE "
+    	  " (KEY_HASH=DIGEST('"+ tokenList[ MAXARGGETKV - 1 ] +"', 'MD5') AND (EXPIRE_DATE is NULL or EXPIRE_DATE > NOW()));";
+
     return ret;
 }
 
+//
+// DELKV X
+// ARGS0 1
 std::string Command::delkv()
 {
 	if (!paramNumCheckOK(MINARGDELKV,MAXARGDELKV)) throw CommandParameterError();
     std::string ret="";
+
+    ret = " DELETE FROM KVSTORE WHERE KEY_HASH=DIGEST('"+ tokenList[ MAXARGDELKV - 1 ] +"', 'MD5'); ";
     return ret;
 }
 
+//
+// GETKEYS X%
+//
 std::string Command::getkeys()
 {
 	if (!paramNumCheckOK(MINARGGETKEYS,MAXARGGETKEYS)) throw CommandParameterError();
@@ -105,6 +140,9 @@ std::string Command::getkeys()
     return ret;
 }
 
+//
+// GETHOLDERS X%
+//
 std::string Command::getholders()
 {
 	if (!paramNumCheckOK(MINARGGETHOLDERS,MAXARGGETHOLDERS)) throw CommandParameterError();
@@ -112,6 +150,9 @@ std::string Command::getholders()
     return ret;
 }
 
+//
+// CREATEHOLDER JSON XHOLDER
+//
 std::string Command::newholder()
 {
 	if (!paramNumCheckOK(MINARGNEWHOLDER,MAXARGNEWHOLDER)) throw CommandParameterError();
@@ -119,6 +160,9 @@ std::string Command::newholder()
     return ret;
 }
 
+//
+// MODHOLDER XHOLDER ADDUNIQUEINDEX 'IDX_XHOLDER_NAME' 'NAME'
+//
 std::string Command::modholder()
 {
 	if (!paramNumCheckOK(MINARGMODHOLDER,MAXARGMODHOLDER)) throw CommandParameterError();
@@ -126,6 +170,9 @@ std::string Command::modholder()
     return ret;
 }
 
+//
+// DELHOLDER XHOLDER
+//
 std::string Command::delholder()
 {
 	if (!paramNumCheckOK(MINARGDELHOLDER,MAXARGDELHOLDER)) throw CommandParameterError();
@@ -149,7 +196,11 @@ std::string PgnosqlCommand::translate()
 
 	std::string ret="";
 
-	if( cmd.getPrefix() == PREFIXFLUSHALL ) {
+	if ( cmd.getPrefix() == PREFIXCOMMIT ) {
+		ret = " COMMIT; ";
+	} else if( cmd.getPrefix() == PREFIXFLUSHKV ) {
+		ret = " TRUNCATE TABLE KVSTORE; ";
+	} else if( cmd.getPrefix() == PREFIXFLUSHALL ) {
 		ret = cmd.flushall();
 	} else if ( cmd.getPrefix() == PREFIXSETKV ) {
 		ret = cmd.setkv();

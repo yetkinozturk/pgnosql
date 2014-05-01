@@ -8,8 +8,8 @@ CREATE TABLE kvstore (
 	  key varchar(128) UNIQUE,
 	  key_hash bytea UNIQUE,
 	  value text,
-	  entry_date DATE,
-	  expire_date DATE
+	  entry_date TIMESTAMP,
+	  expire_date TIMESTAMP
 );
 
 

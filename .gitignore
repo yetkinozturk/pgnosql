@@ -22,3 +22,7 @@
 
 #Vim swap
 *.swp
+
+#Eclipse files
+*.project
+*.cproject
