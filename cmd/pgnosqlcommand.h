@@ -25,6 +25,7 @@ public:
 	std::string getkeys();
 	std::string getholders();
 	std::string newholder();
+	std::string existholder();
 	std::string modholder();
 	std::string delholder();
 	~Command(){}

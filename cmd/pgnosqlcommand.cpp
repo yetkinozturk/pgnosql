@@ -76,7 +76,7 @@ bool Command::paramNumCheckOK(short min, short max)
 std::string Command::flushall()
 {
 	if (!paramNumCheckOK(MINARGFLUSHALL,MAXARGFLUSHALL)) throw CommandParameterError();
-	std::string ret="";
+	std::string ret;
 	return ret;
 }
 
@@ -86,8 +86,8 @@ std::string Command::flushall()
 std::string Command::setkv()
 {
 	if (!paramNumCheckOK(MINARGSETKV,MAXARGSETKV)) throw CommandParameterError();
-    std::string ret="";
-	std::string expireTime="";
+    std::string ret;
+	std::string expireTime;
 
 	if (tokenList.size() == MAXARGSETKV) {
 		expireTime = " NOW() + INTERVAL '" + tokenList[MAXARGSETKV - 1] + " SECONDS' ";
@@ -110,7 +110,7 @@ std::string Command::setkv()
 std::string Command::getkv()
 {
 	if (!paramNumCheckOK(MINARGGETKV,MAXARGGETKV)) throw CommandParameterError();
-    std::string ret="";
+    std::string ret;
 
     ret = " SELECT VALUE FROM KVSTORE WHERE "
     	  " (KEY_HASH=DIGEST('"+ tokenList[ MAXARGGETKV - 1 ] +"', 'MD5') AND (EXPIRE_DATE is NULL or EXPIRE_DATE > NOW()));";
@@ -124,7 +124,7 @@ std::string Command::getkv()
 std::string Command::delkv()
 {
 	if (!paramNumCheckOK(MINARGDELKV,MAXARGDELKV)) throw CommandParameterError();
-    std::string ret="";
+    std::string ret;
 
     ret = " DELETE FROM KVSTORE WHERE KEY_HASH=DIGEST('"+ tokenList[ MAXARGDELKV - 1 ] +"', 'MD5'); ";
     return ret;
@@ -132,51 +132,86 @@ std::string Command::delkv()
 
 //
 // GETKEYS X%
-//
+// ARGS  0  1
 std::string Command::getkeys()
 {
 	if (!paramNumCheckOK(MINARGGETKEYS,MAXARGGETKEYS)) throw CommandParameterError();
-    std::string ret="";
+    std::string ret;
+    ret = " SELECT KEY FROM KVSTORE WHERE (KEY LIKE '"+ tokenList[ MAXARGGETKEYS - 1 ] +"' AND"
+    	  " (EXPIRE_DATE is NULL or EXPIRE_DATE > NOW()));";
     return ret;
 }
 
 //
 // GETHOLDERS X%
-//
+// ARGS     0  1
 std::string Command::getholders()
 {
 	if (!paramNumCheckOK(MINARGGETHOLDERS,MAXARGGETHOLDERS)) throw CommandParameterError();
-    std::string ret="";
+    std::string ret;
+    ret = " SELECT TABLE_NAME FROM USER_TABLES WHERE TABLE_NAME LIKE '"+ tokenList[ MAXARGGETHOLDERS - 1 ] +"'; ";
     return ret;
 }
 
 //
-// CREATEHOLDER JSON XHOLDER
+// EXISTHOLDER X
+// ARGS      0 1
+std::string Command::existholder()
+{
+	if (!paramNumCheckOK(MINARGEXISTHOLDER,MAXARGEXISTHOLDER)) throw CommandParameterError();
+    std::string ret;
+    ret = " SELECT COUNT(*) FROM USER_TABLES WHERE TABLE_NAME='"+ tokenList[ MAXARGEXISTHOLDER - 1 ] +"'; ";
+    return ret;
+}
+
 //
+// CREATEHOLDER JSON X
+// ARGS       0    1 2
 std::string Command::newholder()
 {
 	if (!paramNumCheckOK(MINARGNEWHOLDER,MAXARGNEWHOLDER)) throw CommandParameterError();
-    std::string ret="";
+    std::string ret;
+    ret = " CREATE TABLE "+ tokenList[ MAXARGNEWHOLDER - 1 ] +" ( ID SERIAL PRIMARY KEY, DATA JSON ); "
+    	  " INSERT INTO USER_TABLES (TABLE_NAME,TABLE_TYPE) VALUES ('"+ tokenList[ MAXARGNEWHOLDER - 1 ] +"','HOLDER');";
     return ret;
 }
 
 //
-// MODHOLDER XHOLDER ADDUNIQUEINDEX 'IDX_XHOLDER_NAME' 'NAME'
-//
+// MODHOLDER X ADDUNIQUEINDEX 'IDX_X_NAME' 'author'->>'first_name'
+// MODHOLDER X 	     ADDINDEX 'IDX_X_NAME' 'author'->>'first_name'
+// MODHOLDER X    DELETEINDEX 'IDX_X_NAME'
+// ARGS    0 1              2            3                       4
 std::string Command::modholder()
 {
 	if (!paramNumCheckOK(MINARGMODHOLDER,MAXARGMODHOLDER)) throw CommandParameterError();
-    std::string ret="";
+    std::string ret;
+    std::string indexType;
+    boost::to_upper(tokenList[ MAXARGMODHOLDER - 3 ]);
+
+    if (tokenList[ MAXARGMODHOLDER - 3 ].substr(0,3) == "ADD" ) {
+    	if (tokenList[ MAXARGMODHOLDER - 3 ] == "ADDUNIQUEINDEX") {
+    		indexType = " UNIQUE INDEX ";
+    	} else {
+    		indexType = " INDEX ";
+    	}
+    	ret = " CREATE " + indexType + tokenList[ MAXARGMODHOLDER - 2 ] + " ON " + tokenList[ MAXARGMODHOLDER - 4 ] +
+              " ((data->" + tokenList[ MAXARGMODHOLDER - 1 ]+")); ";
+    } else {
+    	ret = " DROP INDEX " + tokenList[ MAXARGMODHOLDER - 2 ] + "; ";
+    }
     return ret;
 }
 
 //
 // DELHOLDER XHOLDER
-//
+// ARGS    0       1
 std::string Command::delholder()
 {
 	if (!paramNumCheckOK(MINARGDELHOLDER,MAXARGDELHOLDER)) throw CommandParameterError();
-    std::string ret="";
+    std::string ret;
+
+    ret = " DROP TABLE " + tokenList[ MAXARGDELHOLDER - 1 ] +"; " +
+    	  " DELETE FROM USER_TABLES WHERE TABLE_NAME='"+ tokenList[ MAXARGDELHOLDER - 1 ] +"'; ";
     return ret;
 }
 
@@ -214,6 +249,8 @@ std::string PgnosqlCommand::translate()
 		ret = cmd.getholders();
 	} else if ( cmd.getPrefix() == PREFIXNEWHOLDER) {
         ret = cmd.newholder();
+    } else if ( cmd.getPrefix() == PREFIXEXISTHOLDER) {
+    	ret = cmd.existholder();
     } else if ( cmd.getPrefix() == PREFIXMODHOLDER) {
         ret = cmd.modholder();
     } else if ( cmd.getPrefix() == PREFIXDELHOLDER) {
