@@ -27,6 +27,7 @@ public:
 	std::string newholder();
 	std::string existholder();
 	std::string modholder();
+	std::string opholder();
 	std::string delholder();
 	~Command(){}
 };

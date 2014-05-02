@@ -197,9 +197,19 @@ std::string Command::modholder()
     	ret = " CREATE " + indexType + tokenList[ MAXARGMODHOLDER - 2 ] + " ON " + tokenList[ MAXARGMODHOLDER - 4 ] +
               " ((data->" + tokenList[ MAXARGMODHOLDER - 1 ]+")); ";
     } else {
-    	ret = " DROP INDEX " + tokenList[ MAXARGMODHOLDER - 2 ] + "; ";
+    	ret = " DROP INDEX IF EXISTS " + tokenList[ MAXARGMODHOLDER - 2 ] + "; ";
     }
     return ret;
+}
+
+//
+// OPHOLDER
+//
+std::string Command::opholder()
+{
+	if (!paramNumCheckOK(MINARGMODHOLDER,MAXARGMODHOLDER)) throw CommandParameterError();
+	std::string ret;
+	return ret;
 }
 
 //
@@ -210,7 +220,7 @@ std::string Command::delholder()
 	if (!paramNumCheckOK(MINARGDELHOLDER,MAXARGDELHOLDER)) throw CommandParameterError();
     std::string ret;
 
-    ret = " DROP TABLE " + tokenList[ MAXARGDELHOLDER - 1 ] +"; " +
+    ret = " DROP TABLE IF EXISTS " + tokenList[ MAXARGDELHOLDER - 1 ] +"; " +
     	  " DELETE FROM USER_TABLES WHERE TABLE_NAME='"+ tokenList[ MAXARGDELHOLDER - 1 ] +"'; ";
     return ret;
 }
@@ -230,30 +240,31 @@ std::string PgnosqlCommand::translate()
 	}
 
 	std::string ret="";
+	std::string prefix = cmd.getPrefix();
 
-	if ( cmd.getPrefix() == PREFIXCOMMIT ) {
+	if ( prefix == PREFIXCOMMIT ) {
 		ret = " COMMIT; ";
-	} else if( cmd.getPrefix() == PREFIXFLUSHKV ) {
+	} else if( prefix == PREFIXFLUSHKV ) {
 		ret = " TRUNCATE TABLE KVSTORE; ";
-	} else if( cmd.getPrefix() == PREFIXFLUSHALL ) {
+	} else if( prefix == PREFIXFLUSHALL ) {
 		ret = cmd.flushall();
-	} else if ( cmd.getPrefix() == PREFIXSETKV ) {
+	} else if ( prefix == PREFIXSETKV ) {
 		ret = cmd.setkv();
-	} else if ( cmd.getPrefix() == PREFIXGETKV ) {
+	} else if ( prefix == PREFIXGETKV ) {
 		ret = cmd.getkv();
-	} else if ( cmd.getPrefix() == PREFIXDELKV ) {
+	} else if ( prefix == PREFIXDELKV ) {
         ret = cmd.delkv();
-    } else if ( cmd.getPrefix() == PREFIXGETKEYS ) {
+    } else if ( prefix == PREFIXGETKEYS ) {
         ret = cmd.getkeys();
-    } else if ( cmd.getPrefix() == PREFIXGETHOLDERS) {
+    } else if ( prefix == PREFIXGETHOLDERS) {
 		ret = cmd.getholders();
-	} else if ( cmd.getPrefix() == PREFIXNEWHOLDER) {
+	} else if ( prefix == PREFIXNEWHOLDER) {
         ret = cmd.newholder();
-    } else if ( cmd.getPrefix() == PREFIXEXISTHOLDER) {
+    } else if ( prefix == PREFIXEXISTHOLDER) {
     	ret = cmd.existholder();
-    } else if ( cmd.getPrefix() == PREFIXMODHOLDER) {
+    } else if ( prefix == PREFIXMODHOLDER) {
         ret = cmd.modholder();
-    } else if ( cmd.getPrefix() == PREFIXDELHOLDER) {
+    } else if ( prefix == PREFIXDELHOLDER) {
         ret = cmd.delholder();
     } else {
 		throw UnknownCommandError();
