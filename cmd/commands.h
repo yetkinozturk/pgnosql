@@ -32,6 +32,7 @@
 #define MAXARGNEWHOLDER     3
 #define MAXARGEXISTHOLDER   2
 #define MAXARGMODHOLDER     5
+#define MAXARGOPHOLDER		5
 #define MAXARGDELHOLDER     2
 
 // Min number of arguments.
@@ -46,6 +47,7 @@
 #define MINARGNEWHOLDER     3
 #define MINARGEXISTHOLDER   2
 #define MINARGMODHOLDER     4
+#define MINARGOPHOLDER		3
 #define MINARGDELHOLDER     2
 
 #endif

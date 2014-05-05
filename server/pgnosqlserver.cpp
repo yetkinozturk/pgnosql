@@ -6,6 +6,9 @@ PgnosqlServer::PgnosqlServer()
 	logOption.fileLogging = false;
 	logOption.consoleLogging = true;
 
+	port = 0;
+    connLimit = 0;
+
 	//configure LOGGING
 	LOGGING_CONFIG
 	logger = Logger::getLogger( "PgnosqlServer");
@@ -33,6 +36,7 @@ int PgnosqlServer::init()
 {
 	pgConn->connect();
 	LOG4CXX_INFO(logger, "Connected!");
+	return 0;
 }
 int PgnosqlServer::setSocket(int sfd)
 {
@@ -109,12 +113,16 @@ int PgnosqlServer::run()
 	struct epoll_event *events;
 
 	sfd = bindSocket();
-	if (sfd == -1)
-    abort ();
+	if (sfd == -1) {
+		LOG4CXX_FATAL(logger,"run Error, could not bind the port");
+		abort ();
+	}
 
 	s = setSocket(sfd);
-	if (s == -1)
+	if (s == -1) {
+		LOG4CXX_FATAL(logger,"run Error, could not set the socket");
 		abort ();
+	}
 
 	s = listen (sfd, SOMAXCONN);
 	if (s == -1)

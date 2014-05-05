@@ -15,9 +15,9 @@ sudo /etc/init.d/postgresql start
 
 - Configure sql/setup.sql (make your password same with config/pgnosql.cfg)
 
-- psql -U <superusername> -f sql/setup.sql
+- psql -U your_super_user -f sql/setup.sql
 
-- psql -U pgnosql pgnosql -f sql/configure.sql
+- psql -h localhost -U pgnosql pgnosql -f sql/configure.sql
 
 - make
 

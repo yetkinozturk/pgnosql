@@ -1,5 +1,11 @@
 #include "pgnosqlcommand.h"
 
+void removeExtraSpaces(std::string &str)
+{
+	auto new_end = std::unique(str.begin(), str.end(), [] (char lhs, char rhs) { return (lhs == rhs) && (lhs == ' '); });
+	str.erase(new_end, str.end());
+}
+
 Command::Command(std::string str)
 {
 	cmdStr=str;
@@ -14,53 +20,54 @@ bool Command::tokenize()
 		return false;
 	}
 
-    for( size_t i=0; i<cmdStr.length(); i++){
+	size_t i;
+
+    for( i=0; i<cmdStr.length(); i++) {
 
         char c = cmdStr[i];
-        if( c == ' ' )
-        {
-            if(token1.length() > 0)
-            {
+        if( c == ' ' ) {
+            if(token1.length() > 0) {
+
+                if ( boost::to_upper_copy(token1) == "WHERE" ) {
+                	tokenList.push_back(boost::to_upper_copy(token1));
+                	break;
+                }
+
                 tokenList.push_back(token1);
                 token1 = "";
+
             }
-        }
-        else if(c == '\"' )
-        {
+        } else if(c == '\"' ) {
             i++;
             token2="";
-            while( i<cmdStr.length() && cmdStr[i] != '\"' ){ token2.append(1,cmdStr[i]); i++; }
-            if (token2.length() > 0)
-            {
+            while( i < cmdStr.length() && cmdStr[i] != '\"' ){ token2.append(1,cmdStr[i]); i++; }
+            if (token2.length() > 0) {
                 tokenList.push_back(token2);
             }
-        }
-        else if(c == '\'')
-        {
+        } else if(c == '\'') {
             i++;
             token2="";
             while( i<cmdStr.length() && cmdStr[i] != '\'' ){ token2.append(1,cmdStr[i]); i++; }
-            if (token2.length() > 0)
-            {
+            if (token2.length() > 0) {
                 tokenList.push_back(token2);
             }
-        }
-        else
-        {
+        } else {
             token1.append(1,c);
         }
     }
-    if(token1.length() > 0)
-    {
+    if(token1.length() > 0) {
         tokenList.push_back(token1);
         token1="";
     }
-	if (tokenList.empty())
-	{
+	if (tokenList.empty()) {
 		return false;
 	}
 
 	prefix = boost::to_upper_copy(tokenList.front());
+
+	if (tokenList.back() == "WHERE") {
+		tokenList.push_back(cmdStr.substr(i));
+	}
 
 	return true;
 }
@@ -68,6 +75,14 @@ bool Command::tokenize()
 bool Command::paramNumCheckOK(short min, short max)
 {
 	return ((tokenList.size() >= min) && (tokenList.size() <= max));
+}
+
+bool Command::isFirstLevelCondition(std::string expr)
+{
+	std::size_t found1 = expr.find("->>");
+	std::size_t found2 = expr.find("->");
+
+	return ( std::string::npos == found1 || std::string::npos == found2 );
 }
 
 //
@@ -179,6 +194,7 @@ std::string Command::newholder()
 //
 // MODHOLDER X ADDUNIQUEINDEX 'IDX_X_NAME' 'author'->>'first_name'
 // MODHOLDER X 	     ADDINDEX 'IDX_X_NAME' 'author'->>'first_name'
+// MODHOLDER X 	     ADDINDEX 'IDX_X_NAME' 'name'
 // MODHOLDER X    DELETEINDEX 'IDX_X_NAME'
 // ARGS    0 1              2            3                       4
 std::string Command::modholder()
@@ -186,6 +202,7 @@ std::string Command::modholder()
 	if (!paramNumCheckOK(MINARGMODHOLDER,MAXARGMODHOLDER)) throw CommandParameterError();
     std::string ret;
     std::string indexType;
+    bool firstLevelIndex = true; //FIXME WITH THIS.
     boost::to_upper(tokenList[ MAXARGMODHOLDER - 3 ]);
 
     if (tokenList[ MAXARGMODHOLDER - 3 ].substr(0,3) == "ADD" ) {
@@ -194,8 +211,13 @@ std::string Command::modholder()
     	} else {
     		indexType = " INDEX ";
     	}
-    	ret = " CREATE " + indexType + tokenList[ MAXARGMODHOLDER - 2 ] + " ON " + tokenList[ MAXARGMODHOLDER - 4 ] +
-              " ((data->" + tokenList[ MAXARGMODHOLDER - 1 ]+")); ";
+    	if (!isFirstLevelCondition(tokenList[ MAXARGMODHOLDER - 1 ])) {
+    		ret = " CREATE " + indexType + tokenList[ MAXARGMODHOLDER - 2 ] + " ON " + tokenList[ MAXARGMODHOLDER - 4 ] +
+    			  " ((data->" + tokenList[ MAXARGMODHOLDER - 1 ]+")); ";
+    	} else {
+    		ret = " CREATE " + indexType + tokenList[ MAXARGMODHOLDER - 2 ] + " ON " + tokenList[ MAXARGMODHOLDER - 4 ] +
+    		    			  " ((data->>" + tokenList[ MAXARGMODHOLDER - 1 ]+")); ";
+    	}
     } else {
     	ret = " DROP INDEX IF EXISTS " + tokenList[ MAXARGMODHOLDER - 2 ] + "; ";
     }
@@ -203,12 +225,34 @@ std::string Command::modholder()
 }
 
 //
-// OPHOLDER
-//
+// OPHOLDER X CLEAR
+// OPHOLDER X DROP
+// OPHOLDER X DELETE    WHERE     data->>'name' = 'Book the First'
+// OPHOLDER X UPDATE    WHERE     data->>'name' = 'Book the First' WITH {"a":"b"}
+// OPHOLDER x GET	    WHERE     data->>'name' = 'Book the First'
+// OPHOLDER x PUT    	{"x":"y"}
+// ARGS   0 1      2            3         					    				4
 std::string Command::opholder()
 {
-	if (!paramNumCheckOK(MINARGMODHOLDER,MAXARGMODHOLDER)) throw CommandParameterError();
+	if (!paramNumCheckOK(MINARGOPHOLDER,MAXARGOPHOLDER)) throw CommandParameterError();
 	std::string ret;
+	std::string operation = boost::to_upper_copy(tokenList[ MAXARGOPHOLDER - 5 ]);
+
+	if ( operation == "CLEAR" ) {
+		ret = " TRUNCATE TABLE "+ tokenList[ MAXARGOPHOLDER - 6 ] +"; ";
+	} else if ( operation == "DROP" ) {
+		ret = " DROP TABLE "+ tokenList[ MAXARGOPHOLDER - 6 ] +"; ";
+	} else if ( operation == "DELETE" ) {
+
+	} else if ( operation == "UPDATE" ) {
+
+	} else if ( operation == "GET" ) {
+
+	} else if ( operation == "PUT" ) {
+
+	} else {
+		throw CommandParameterError();
+	}
 	return ret;
 }
 
@@ -229,6 +273,7 @@ PgnosqlCommand::PgnosqlCommand(std::string str)
 {
 	cmdStr = str;
 	boost::trim(cmdStr);
+	removeExtraSpaces(cmdStr);
 	cmd = Command(cmdStr);
 }
 
