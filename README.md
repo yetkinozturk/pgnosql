@@ -43,7 +43,7 @@ For Debian based Linux distros:
 sudo apt-get install autoconf automake libpqxx-3.1 libpqxx3-dev liblog4cxx10 liblog4cxx10-dev libgmpxx4ldbl libgmp3-dev libapr1 libaprutil1 libtool libconfig++-dev postgresql-contrib-9.3 libboost-all-dev postgresql-9.3-plv8
 
 
-- OSX (will be supported after porting epoll to libevent)
+- OSX (will be supported after porting server part from epoll to libevent)
 
 brew install postgresql libpqxx log4cxx boost v8
 
