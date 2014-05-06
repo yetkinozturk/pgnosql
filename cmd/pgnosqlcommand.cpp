@@ -8,7 +8,7 @@ void removeExtraSpaces(std::string &str)
 
 Command::Command(std::string str)
 {
-	cmdStr=str;
+	cmdStr = str;
 }
 
 bool Command::tokenize()
@@ -227,29 +227,32 @@ std::string Command::modholder()
 //
 // OPHOLDER X CLEAR
 // OPHOLDER X DROP
-// OPHOLDER X DELETE    WHERE     data->>'name' = 'Book the First'
-// OPHOLDER X UPDATE    WHERE     data->>'name' = 'Book the First' WITH {"a":"b"}
-// OPHOLDER x GET	    WHERE     data->>'name' = 'Book the First'
+// OPHOLDER X DELETE    WHERE     data->>'name' = 'Book the First' and ... or .... and ... and ...
+// OPHOLDER X UPDATE    WHERE     data->>'name' = 'Book the First' and ... or .... and ... and ... WITH {"a":"b"}
+// OPHOLDER x GET	    WHERE     data->>'name' = 'Book the First' and ... or .... and ... and ...
+// OPHOLDER X GETALL
 // OPHOLDER x PUT    	{"x":"y"}
-// ARGS   0 1      2            3         					    				4
+// ARGS   0 1      2            3         					    								 4
 std::string Command::opholder()
 {
 	if (!paramNumCheckOK(MINARGOPHOLDER,MAXARGOPHOLDER)) throw CommandParameterError();
 	std::string ret;
-	std::string operation = boost::to_upper_copy(tokenList[ MAXARGOPHOLDER - 5 ]);
+	std::string operation = boost::to_upper_copy(tokenList[ MAXARGOPHOLDER - 3 ]);
 
 	if ( operation == "CLEAR" ) {
-		ret = " TRUNCATE TABLE "+ tokenList[ MAXARGOPHOLDER - 6 ] +"; ";
+		ret = " TRUNCATE TABLE "+ tokenList[ MAXARGOPHOLDER - 4 ] +"; ";
 	} else if ( operation == "DROP" ) {
-		ret = " DROP TABLE "+ tokenList[ MAXARGOPHOLDER - 6 ] +"; ";
+		ret = " DROP TABLE "+ tokenList[ MAXARGOPHOLDER - 4 ] +"; ";
 	} else if ( operation == "DELETE" ) {
-
+		ret = " DELETE FROM "+ tokenList[ MAXARGOPHOLDER - 4 ] +" WHERE "+ tokenList[ MAXARGOPHOLDER - 1 ] +"; ";
 	} else if ( operation == "UPDATE" ) {
-
+		//TODO
 	} else if ( operation == "GET" ) {
-
+		ret = " SELECT DATA FROM "+ tokenList[ MAXARGOPHOLDER - 4 ] +" WHERE "+ tokenList[ MAXARGOPHOLDER - 1 ] +"; ";
+	} else if ( operation == "GETALL" ) {
+		ret = " SELECT DATA FROM "+ tokenList[ MAXARGOPHOLDER - 4 ] +"; ";
 	} else if ( operation == "PUT" ) {
-
+		ret = " INSERT INTO "+ tokenList[ MAXARGOPHOLDER - 4 ] +" (DATA) VALUES ( " + tokenList[ MAXARGOPHOLDER - 2 ] +" ); ";
 	} else {
 		throw CommandParameterError();
 	}
