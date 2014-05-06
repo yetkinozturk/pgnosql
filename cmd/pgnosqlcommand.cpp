@@ -1,14 +1,30 @@
 #include "pgnosqlcommand.h"
 
-void removeExtraSpaces(std::string &str)
+
+Command::Command(std::string str)
+{
+	cmdStr = str;
+	removeExtraSpaces(cmdStr);
+}
+
+void Command::removeExtraSpaces(std::string &str)
 {
 	auto new_end = std::unique(str.begin(), str.end(), [] (char lhs, char rhs) { return (lhs == rhs) && (lhs == ' '); });
 	str.erase(new_end, str.end());
 }
 
-Command::Command(std::string str)
+void Command::makeProperJsonQuotes(std::string &str)
 {
-	cmdStr = str;
+	boost::trim(str);
+	if (str.length() > 1) {
+		boost::replace_all(str,"'","\"");
+		if (str[0] == '"' && str[str.length()-1] == '"') {
+			str[0] = '\'';
+			str[str.length()-1] = '\'';
+		} else {
+			str = '\'' + str + '\'';
+		}
+	}
 }
 
 bool Command::tokenize()
@@ -252,6 +268,7 @@ std::string Command::opholder()
 	} else if ( operation == "GETALL" ) {
 		ret = " SELECT DATA FROM "+ tokenList[ MAXARGOPHOLDER - 4 ] +"; ";
 	} else if ( operation == "PUT" ) {
+		makeProperJsonQuotes(tokenList[ MAXARGOPHOLDER - 2 ]);
 		ret = " INSERT INTO "+ tokenList[ MAXARGOPHOLDER - 4 ] +" (DATA) VALUES ( " + tokenList[ MAXARGOPHOLDER - 2 ] +" ); ";
 	} else {
 		throw CommandParameterError();
@@ -276,7 +293,6 @@ PgnosqlCommand::PgnosqlCommand(std::string str)
 {
 	cmdStr = str;
 	boost::trim(cmdStr);
-	removeExtraSpaces(cmdStr);
 	cmd = Command(cmdStr);
 }
 
