@@ -256,22 +256,57 @@ std::string Command::opholder()
 	std::string operation = boost::to_upper_copy(tokenList[ MAXARGOPHOLDER - 3 ]);
 
 	if ( operation == "CLEAR" ) {
+
 		ret = " TRUNCATE TABLE "+ tokenList[ MAXARGOPHOLDER - 4 ] +"; ";
+
 	} else if ( operation == "DROP" ) {
+
 		ret = " DROP TABLE "+ tokenList[ MAXARGOPHOLDER - 4 ] +"; ";
+
 	} else if ( operation == "DELETE" ) {
+
 		ret = " DELETE FROM "+ tokenList[ MAXARGOPHOLDER - 4 ] +" WHERE "+ tokenList[ MAXARGOPHOLDER - 1 ] +"; ";
+
 	} else if ( operation == "UPDATE" ) {
-		//TODO
+
+		std::vector<std::string> tokenListOrig = tokenList;
+		std::string condition = " WHERE ";
+		std::string newValue;
+		setCommandStr(tokenList[MAXARGOPHOLDER - 1]);
+		tokenize();
+
+		for (auto it = tokenList.begin();it != tokenList.end();it++)
+		{
+			if ((*it) != "WITH" && newValue.length() == 0)
+			{
+				condition += (*it);
+			} else if ((*it) != "WITH")
+			{
+				condition += "; ";
+				newValue = " ";
+			} else {
+				newValue += (*it);
+			}
+		}
+		ret = " UPDATE " +tokenListOrig[MAXARGOPHOLDER - 4]+ " SET DATA="+ newValue +" " + condition;
+
 	} else if ( operation == "GET" ) {
+
 		ret = " SELECT DATA FROM "+ tokenList[ MAXARGOPHOLDER - 4 ] +" WHERE "+ tokenList[ MAXARGOPHOLDER - 1 ] +"; ";
+
 	} else if ( operation == "GETALL" ) {
+
 		ret = " SELECT DATA FROM "+ tokenList[ MAXARGOPHOLDER - 4 ] +"; ";
+
 	} else if ( operation == "PUT" ) {
+
 		makeProperJsonQuotes(tokenList[ MAXARGOPHOLDER - 2 ]);
 		ret = " INSERT INTO "+ tokenList[ MAXARGOPHOLDER - 4 ] +" (DATA) VALUES ( " + tokenList[ MAXARGOPHOLDER - 2 ] +" ); ";
+
 	} else {
+
 		throw CommandParameterError();
+
 	}
 	return ret;
 }

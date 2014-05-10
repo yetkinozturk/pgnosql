@@ -15,6 +15,7 @@ private:
 public:
 	Command(){}
 	Command(std::string cmdString);
+	void setCommandStr(std::string cStr){ cmdStr = cStr;}
 	void removeExtraSpaces(std::string &str);
 	void makeProperJsonQuotes(std::string &str);
 	bool tokenize();
