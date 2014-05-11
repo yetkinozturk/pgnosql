@@ -18,13 +18,30 @@ CREATE UNIQUE INDEX kvstore_eq_key ON kvstore USING btree (key);
 CREATE UNIQUE INDEX kvstore_hashedkey ON kvstore USING btree (key_hash);
 CREATE INDEX kvstore_likekey ON kvstore USING GIST (key gist_trgm_ops);
 
-
-CREATE TABLE user_tables (
-  id serial PRIMARY KEY,
-  table_name varchar(128) UNIQUE,
-  table_type varchar(128)
-);
-
-CREATE UNIQUE INDEX user_tables_eq_table_name ON user_tables USING btree (table_name);
-CREATE INDEX user_tables_liketable_name ON user_tables USING GIST (table_name gist_trgm_ops);
-
+CREATE OR REPLACE FUNCTION DROP_ALL_LIKE(IN _schema TEXT, IN _parttionbase TEXT) 
+RETURNS void 
+LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    row     record;
+BEGIN
+    FOR row IN 
+        SELECT
+            table_schema,
+            table_name
+        FROM
+            information_schema.tables
+        WHERE
+            table_type = 'BASE TABLE'
+        AND
+            table_schema = _schema
+        AND
+            table_name ILIKE (_parttionbase || '%')
+    LOOP
+        EXECUTE 'DROP TABLE ' || quote_ident(row.table_schema) || '.' || quote_ident(row.table_name);
+        RAISE INFO 'Dropped table: %', quote_ident(row.table_schema) || '.' || quote_ident(row.table_name);
+    END LOOP;
+    TRUNCATE TABLE kvstore;
+END;
+$$;
