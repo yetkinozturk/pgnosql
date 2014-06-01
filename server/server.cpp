@@ -14,5 +14,6 @@ int main () {
 	}
 	server->run();
 	delete server;
+	server = nullptr;
 	return 0;
 }

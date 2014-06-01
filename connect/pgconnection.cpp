@@ -84,10 +84,20 @@ pqxx::connection* PGConnection::getConnection() {
 	return conn;
 }
 
+std::string PGConnection::getConfig(std::string key) {
+	auto it = config.find(key);
+	if (it != std::end(config)){
+		return config[key];
+	} else {
+		return "UNKNOWN";
+	}
+}
+
 //Destructor:
 PGConnection::~PGConnection() {
 	if ( conn != nullptr) {
 		delete conn;
+		conn = nullptr;
 	}
 	LOG4CXX_INFO(logger, "Finalizing PGConnection");
 }

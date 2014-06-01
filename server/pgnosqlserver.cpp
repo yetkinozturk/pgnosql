@@ -34,6 +34,8 @@ PgnosqlServer::PgnosqlServer(std::map<std::string,std::string> config)
 
 int PgnosqlServer::init()
 {
+	LOG4CXX_INFO(logger, "Starting server at port: "+(std::to_string(port)));
+	LOG4CXX_INFO(logger, "Starting Postgresql Server at: "+pgConn->getConfig("pg_hostname")+" port: "+pgConn->getConfig("pg_port"));
 	pgConn->connect();
 	LOG4CXX_INFO(logger, "Connected!");
 	return 0;
@@ -211,8 +213,10 @@ int PgnosqlServer::run()
 					/* Make the incoming socket non-blocking and add it to the
                     list of fds to monitor. */
 					s = setSocket(infd);
-					if (s == -1)
+					if (s == -1) {
+						LOG4CXX_FATAL(logger,"run Error, setSocketss aborting.");
 						abort ();
+					}
 
 					event.data.fd = infd;
 					event.events = EPOLLIN | EPOLLET;

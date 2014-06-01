@@ -31,6 +31,9 @@ public:
 	//Get connection handler
 	pqxx::connection* getConnection();
 
+	//Get specific config
+	std::string getConfig(std::string key);
+
 	//Destructor:
 	~PGConnection();
 
