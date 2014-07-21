@@ -12,6 +12,10 @@
 #include <log4cxx/propertyconfigurator.h>
 #include "exceptions/exceptions.h"
 
+#ifndef EOK
+	#define EOK 0
+#endif
+
 using namespace log4cxx;
 using namespace log4cxx::xml;
 using namespace log4cxx::helpers;

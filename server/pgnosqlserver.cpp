@@ -182,6 +182,7 @@ int PgnosqlServer::run()
 					char hbuf[NI_MAXHOST], sbuf[NI_MAXSERV];
 
 					in_len = sizeof in_addr;
+					errno=EOK;
 					infd = accept (sfd, &in_addr, &in_len);
 					if (infd == -1)
                     {
@@ -242,7 +243,7 @@ int PgnosqlServer::run()
                 {
 					ssize_t count;
 					char buf[512];
-
+					errno=EOK;
 					count = read (events[i].data.fd, buf, sizeof buf);
 					if (count == -1)
                     {
