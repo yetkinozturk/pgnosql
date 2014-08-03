@@ -1,17 +1,6 @@
 #ifndef _PGNOSQLSERVER_H
 #define _PGNOSQLSERVER_H
 
-#include <cstdlib>
-#include <cstring>
-#include <string>
-#include <map>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/epoll.h>
-#include <cerrno>
 #include "common/common.h"
 #include "connect/pgconnection.h"
 #include "logging/loggingoption.h"

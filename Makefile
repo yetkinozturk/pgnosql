@@ -11,6 +11,7 @@ server.app: server.o pgconnection.o configure.o pgnosqlserver.o
 	@echo "==============="
 	@echo ""
 	$(CC) --std=gnu++11 -o $@ $^ $(LDFLAGS)
+	rm *.o
 
 server.o: connect/pgconnection.cpp config/configure.cpp cmd/pgnosqlcommand.cpp server/pgnosqlserver.cpp server/server.cpp
 	@echo ""
@@ -28,5 +29,4 @@ clean:
 	@echo "Cleaning Up"
 	@echo "==========="
 	@echo ""
-	rm *.o
 	rm server.app

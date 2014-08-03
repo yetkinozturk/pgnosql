@@ -1,3 +1,5 @@
+#include <iostream>
+#include <map>
 #include "configure.h"
 
 std::map<std::string,std::string> getConfiguration()
