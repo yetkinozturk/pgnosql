@@ -10,7 +10,7 @@ server.app: server.o pgconnection.o configure.o pgnosqlserver.o
 	@echo "Linking Objects"
 	@echo "==============="
 	@echo ""
-	$(CC) --std=gnu++11 -o $@ $^ $(LDFLAGS)
+	$(CC) --std=gnu++11 -Wall -O3 -o $@ $^ $(LDFLAGS)
 	rm *.o
 
 server.o: connect/pgconnection.cpp config/configure.cpp cmd/pgnosqlcommand.cpp server/pgnosqlserver.cpp server/server.cpp
@@ -19,7 +19,7 @@ server.o: connect/pgconnection.cpp config/configure.cpp cmd/pgnosqlcommand.cpp s
 	@echo "Compiling Sources"
 	@echo "================="
 	@echo ""
-	$(CC) --std=gnu++11 -c $(CFLAGS) $^ 
+	$(CC) --std=gnu++11 -Wall -O3 -c $(CFLAGS) $^ 
 
 .PHONY: clean
 

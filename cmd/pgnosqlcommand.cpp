@@ -89,7 +89,7 @@ bool Command::tokenize() {
 	return true;
 }
 
-bool Command::paramNumCheckOK(short min, short max) {
+bool Command::paramNumCheckOK(std::size_t min, std::size_t max) {
 	return ((tokenList.size() >= min) && (tokenList.size() <= max));
 }
 
@@ -235,7 +235,6 @@ std::string Command::modholder() {
 		throw CommandParameterError();
 	std::string ret;
 	std::string indexType;
-	bool firstLevelIndex = true;
 	boost::to_upper(tokenList[ MAXARGMODHOLDER - 3]);
 	tokenList[ MAXARGMODHOLDER - 4] = "jsstore_"
 			+ tokenList[ MAXARGMODHOLDER - 4];

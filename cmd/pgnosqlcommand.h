@@ -19,7 +19,7 @@ public:
 	void removeExtraSpaces(std::string &str);
 	void makeProperJsonQuotes(std::string &str);
 	bool tokenize();
-	bool paramNumCheckOK(short min, short max);
+	bool paramNumCheckOK(std::size_t min, std::size_t max);
 	bool isFirstLevelCondition(std::string expr);
 	std::string getPrefix(){ return prefix; }
 	std::string flushall();
